@@ -26,3 +26,7 @@ board=%5B%5B0%2C0%2C0%2C2%2C0%2C0%2C0%2C0%2C0%5D%2C%5B0%2C0%2C3%2C0%2C0%2C0%2C0%
 - [] e2e tests
 - [] more robust error handling
 - [] investigate: improve response time < 500ms
+
+# Hosted
+
+https://crazy4groovy-sudoku-api.glitch.me/sudoku/board
