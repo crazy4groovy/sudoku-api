@@ -16,16 +16,15 @@ fastify.use(cors)
 
 fastify.get('/', async () => {
   return {
-    GET: '/sudoku/board?difficulty=easy|medium|hard',
-    POST: '/sudoku/board?board=[1,2,3...]'
+    GET: '/sudoku/board?difficulty=(easy|medium|hard)&solve=(true|false)',
+    POST: '/sudoku/board >> application/json body of "[1,2,3...]"'
   }
 })
 
 fastify.get('/sudoku/board', async (req, res) => {
   const {query} = req
   res.type('application/json').code(200)
-  const result = await handler.get({query})
-  return result
+  return handler.get({query})
 })
 
 const postOpts = Object.freeze({
@@ -39,8 +38,7 @@ const postOpts = Object.freeze({
 fastify.post('/sudoku/board', postOpts, async (req, res) => {
   const {body} = req
   res.type('application/json').code(200)
-  const result = await handler.post({body})
-  return result
+  return handler.post({body})
 })
 
 fastify.listen(

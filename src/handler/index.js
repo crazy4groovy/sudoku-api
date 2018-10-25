@@ -3,17 +3,24 @@ const flatten = require('lodash.flatten')
 
 const {chunkify} = require('./utils')
 
-module.exports.get = async ({query}) => {
+async function get({query}) {
   const {difficulty = 'easy'} = query
+
   const {board} = await fetch(
     `https://sugoku2.herokuapp.com/board?difficulty=${difficulty}`
   ).then(response => response.json())
+
+  if (query.solve !== 'false') {
+    return post({body: board})
+  }
+
   return flatten(board)
 }
 
-module.exports.post = async ({body}) => {
-  const chunkedBody = chunkify(body)
-  const board = encodeURIComponent(JSON.stringify(chunkedBody))
+async function post({body}) {
+  const bodyChunked = chunkify(body)
+  const board = encodeURIComponent(JSON.stringify(bodyChunked))
+
   const {solution} = await fetch('https://sugoku2.herokuapp.com/solve', {
     method: 'POST',
     mode: 'cors',
@@ -22,5 +29,9 @@ module.exports.post = async ({body}) => {
     },
     body: `board=${board}`
   }).then(response => response.json())
+
   return flatten(solution)
 }
+
+module.exports.get = get
+module.exports.post = post
