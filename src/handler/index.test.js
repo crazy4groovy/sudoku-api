@@ -9,6 +9,17 @@ describe('HANDLER::', () => {
     expect(await get({query: {difficulty: 'hard'}})).toHaveLength(81)
   })
 
+  it('should not solve a new board via GET when specified', async () => {
+    const solved = await get({query: {}}) // default = true
+    expect(solved.filter(num => num === 0).length).toBe(0)
+
+    const solved2 = await get({query: {solve: 'true'}})
+    expect(solved2.filter(num => num === 0).length).toBe(0)
+
+    const unsolved = await get({query: {solve: 'false'}})
+    expect(unsolved.filter(num => num === 0).length).toBeGreaterThan(0)
+  })
+
   it('should solve a board via POST', async () => {
     // prettier-ignore
     const data = [0,0,0,2,0,0,0,0,0,0,0,3,0,0,0,0,7,0,0,0,0,1,0,9,0,0,0,0,1,0,0,7,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,7,0,0,0,0,0,0,0,3,1,0,0,0,0,9,6,0,0,0,0,9,3,7,4,1,0,4,5,7,1,0,3,8,0]
