@@ -16,8 +16,9 @@ fastify.use(cors)
 
 fastify.get('/', async () => {
   return {
-    GET: '/sudoku/board?difficulty=(easy|medium|hard)&solve=(true|false)',
-    POST: '/sudoku/board >> application/json body of "[1,2,3...]"'
+    GET: '/sudoku/board{?idx=(0-80)&number=(1-9)}'
+    // GET: '/sudoku/board?difficulty=(easy|medium|hard)&solve=(true|false)',
+    // POST: '/sudoku/board >> application/json body of "[1,2,3...]"'
   }
 })
 
@@ -27,19 +28,19 @@ fastify.get('/sudoku/board', async (req, res) => {
   return handler.get({query})
 })
 
-const postOpts = Object.freeze({
-  schema: {
-    body: {
-      type: 'array'
-    }
-  }
-})
+// const postOpts = Object.freeze({
+//   schema: {
+//     body: {
+//       type: 'array'
+//     }
+//   }
+// })
 
-fastify.post('/sudoku/board', postOpts, async (req, res) => {
-  const {body} = req
-  res.type('application/json').code(200)
-  return handler.post({body})
-})
+// fastify.post('/sudoku/board', postOpts, async (req, res) => {
+//   const {body} = req
+//   res.type('application/json').code(200)
+//   return handler.post({body})
+// })
 
 fastify.listen(
   Number(process.env.PORT) || 3000,

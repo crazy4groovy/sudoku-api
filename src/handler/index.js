@@ -1,37 +1,23 @@
-const fetch = require('node-fetch')
-const flatten = require('lodash.flatten')
+const rand = require('lodash.random')
+const getBoard = require('./board')
+const {changeBoard, execTimes} = require('./utils')
 
-const {chunkify} = require('./utils')
+function get({query}) {
+  let board = getBoard()
 
-async function get({query}) {
-  const {difficulty = 'easy'} = query
-
-  const {board} = await fetch(
-    `https://sugoku2.herokuapp.com/board?difficulty=${difficulty}`
-  ).then(response => response.json())
-
-  if (query.solve !== 'false') {
-    return post({body: board})
+  function shuffleBoard() {
+    board = changeBoard(rand(0, 80), rand(1, 9), board)
   }
+  const times = rand(10, 100)
+  // console.log('Shuffle times:', times)
+  execTimes(times, shuffleBoard)
 
-  return flatten(board)
-}
+  if (!query.num) return board
 
-async function post({body}) {
-  const bodyChunked = chunkify(body)
-  const board = encodeURIComponent(JSON.stringify(bodyChunked))
-
-  const {solution} = await fetch('https://sugoku2.herokuapp.com/solve', {
-    method: 'POST',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-    },
-    body: `board=${board}`
-  }).then(response => response.json())
-
-  return flatten(solution)
+  const idx = Number(query.idx)
+  const num = Number(query.num)
+  board = changeBoard(idx, num, board)
+  return board
 }
 
 module.exports.get = get
-module.exports.post = post
