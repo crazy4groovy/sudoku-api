@@ -1,7 +1,15 @@
-const flatten = require('lodash.flatten')
+// const flatten = require('lodash.flatten')
 
 const execTimes = (num, thunk) => {
   for (let i = 0; i < num; i++) thunk(i)
+}
+
+const groupChunksReducer = (coll, chunk, i) => {
+  if (i % 3 === 0) {
+    coll.push([])
+  }
+  coll[coll.length - 1].push(chunk)
+  return coll
 }
 
 /**
@@ -17,9 +25,18 @@ const chunkifyAsRows = (board = []) =>
   }, [])
 
 /**
-  Returns the board in array that represent its vertical columns
+  Returns the board in array that represent its horizontal rows in groups of 3
 */
 // eslint-disable-next-line no-unused-vars
+const chunkifyAsGroupRows = (board = []) => {
+  const rowChunks = chunkifyAsRows(board)
+  const groups = rowChunks.reduce(groupChunksReducer, [])
+  return groups
+}
+
+/**
+  Returns the board in array that represent its vertical columns
+*/
 const chunkifyAsColumns = (board = []) => {
   // [i=0] => 0, 9, 18, 27, 36, ..., 81
   // [i=1] => 1, 10, 19, .. 82
@@ -32,6 +49,16 @@ const chunkifyAsColumns = (board = []) => {
     }
   }
   return columns
+}
+
+/**
+  Returns the board in array that represent its vertical columns in groups of 3
+*/
+// eslint-disable-next-line no-unused-vars
+const chunkifyAsGroupColumns = (board = []) => {
+  const columnChunks = chunkifyAsColumns(board)
+  const groups = columnChunks.reduce(groupChunksReducer, [])
+  return groups
 }
 
 /**
@@ -59,35 +86,59 @@ const chunkifyAsSquares = (board = []) => {
   return squares
 }
 
-const swapRowNums = (row = [], a = 1, b = 2) => {
-  row = row.join('')
-  row = row.replace(new RegExp(a), '_')
-  row = row.replace(new RegExp(b), a)
-  row = row.replace(/_/, b)
-  row = row.split('').map(c => Number(c))
-  return row
+/**
+  Swaps numbers a <==> b in an array
+*/
+const swap = (nums = [], a, b) => {
+  nums.forEach((n, i) => {
+    if (n === a) {
+      nums[i] = '_'
+    }
+  })
+  // todo: can this go in loop above?
+  nums.forEach((n, i) => {
+    if (n === b) {
+      nums[i] = a
+    }
+  })
+  nums.forEach((n, i) => {
+    if (n === '_') {
+      nums[i] = b
+    }
+  })
+
+  return nums
 }
 
 /**
   Changes a valid/solved board to contain a given number (newNum) at an index (idx)
   Note: Board is still valid/solved
 */
-const changeBoard = (idx = 0, newNum = 1, board = []) => {
-  if (idx < 0 || idx > 80) throw new Error(`idx ${idx} is invalid`)
-  if (newNum < 1 || newNum > 9) throw new Error(`newNum ${newNum} is invalid`)
+const changeBoardNum = (idx = 0, setToNum = 1, board = []) => {
+  if (idx < 0 || idx > 80) throw new Error(`board idx ${idx} is invalid`)
+  if (setToNum < 1 || setToNum > 9)
+    throw new Error(`board newNum ${setToNum} is invalid`)
   if (!Array.isArray(board) || board.length !== 81)
     throw new Error(`board ${JSON.stringify(board)} is invalid`)
 
   const oldNum = board[idx]
 
-  if (oldNum === newNum) return board
+  if (oldNum === setToNum) return board
 
-  const boardRows = chunkifyAsRows(board)
-  const newBoardRows = boardRows.map(row => swapRowNums(row, oldNum, newNum))
-  const newBoard = flatten(newBoardRows)
-  return newBoard
+  return swap(board.slice(0), oldNum, setToNum)
 }
 
-module.exports.changeBoard = changeBoard
-module.exports.chunkify = chunkifyAsRows
+// TODO: implement these for more swapping options
+// eslint-disable-next-line no-unused-vars
+const changeBoardCols = (col1, col2, board) => board
+// eslint-disable-next-line no-unused-vars
+const changeBoardGroupCols = (col1, col2, board) => board
+// eslint-disable-next-line no-unused-vars
+const changeBoardRows = (row1, row2, board) => board
+// eslint-disable-next-line no-unused-vars
+const changeBoardGroupRows = (row1, row2, board) => board
+
+module.exports.changeBoardNum = changeBoardNum
+module.exports.chunkifyAsRows = chunkifyAsRows
 module.exports.execTimes = execTimes
+module.exports.swap = swap

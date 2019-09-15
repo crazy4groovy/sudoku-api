@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src",
+    "lint": "xo --fix",
     "test": "xo src && jest",
     "test:only": "jest"
   },
