@@ -1,37 +1,7 @@
-// const flatten = require('lodash.flatten')
+const flatten = require('lodash.flatten')
 
 const execTimes = (num, thunk) => {
   for (let i = 0; i < num; i++) thunk(i)
-}
-
-const groupChunksReducer = (coll, chunk, i) => {
-  if (i % 3 === 0) {
-    coll.push([])
-  }
-  coll[coll.length - 1].push(chunk)
-  return coll
-}
-
-/**
-  Returns the board in array that represent its horizontal rows
-*/
-const chunkifyAsRows = (board = []) =>
-  board.reduce((coll, item, i) => {
-    if (i % 9 === 0) {
-      coll.push([])
-    }
-    coll[coll.length - 1].push(item)
-    return coll
-  }, [])
-
-/**
-  Returns the board in array that represent its horizontal rows in groups of 3
-*/
-// eslint-disable-next-line no-unused-vars
-const chunkifyAsGroupRows = (board = []) => {
-  const rowChunks = chunkifyAsRows(board)
-  const groups = rowChunks.reduce(groupChunksReducer, [])
-  return groups
 }
 
 /**
@@ -52,9 +22,28 @@ const chunkifyAsColumns = (board = []) => {
 }
 
 /**
+  Returns the board in array that represent its horizontal rows
+*/
+const chunkifyAsRows = (board = []) =>
+  board.reduce((coll, item, i) => {
+    if (i % 9 === 0) {
+      coll.push([])
+    }
+    coll[coll.length - 1].push(item)
+    return coll
+  }, [])
+
+const groupChunksReducer = (coll, chunk, i) => {
+  if (i % 3 === 0) {
+    coll.push([])
+  }
+  coll[coll.length - 1].push(chunk)
+  return coll
+}
+
+/**
   Returns the board in array that represent its vertical columns in groups of 3
 */
-// eslint-disable-next-line no-unused-vars
 const chunkifyAsGroupColumns = (board = []) => {
   const columnChunks = chunkifyAsColumns(board)
   const groups = columnChunks.reduce(groupChunksReducer, [])
@@ -62,9 +51,17 @@ const chunkifyAsGroupColumns = (board = []) => {
 }
 
 /**
+  Returns the board in array that represent its horizontal rows in groups of 3
+*/
+const chunkifyAsGroupRows = (board = []) => {
+  const rowChunks = chunkifyAsRows(board)
+  const groups = rowChunks.reduce(groupChunksReducer, [])
+  return groups
+}
+
+/**
   Returns the board in array that represent its 9x9 squares
 */
-// eslint-disable-next-line no-unused-vars
 const chunkifyAsSquares = (board = []) => {
   //   // [i=0] 0,1,2,     9,10,11,  18,19,20
   //   // [i=1] 3,4,5,    12,13,14,  21,22,23
@@ -90,6 +87,8 @@ const chunkifyAsSquares = (board = []) => {
   Swaps numbers a <==> b in an array
 */
 const swap = (nums = [], a, b) => {
+  nums = nums.slice(0) // clone
+
   nums.forEach((n, i) => {
     if (n === a) {
       nums[i] = '_'
@@ -111,10 +110,10 @@ const swap = (nums = [], a, b) => {
 }
 
 /**
-  Changes a valid/solved board to contain a given number (newNum) at an index (idx)
+  Changes a valid/solved board to contain a given number (setToNum) at an index (idx)
   Note: Board is still valid/solved
 */
-const changeBoardNum = (idx = 0, setToNum = 1, board = []) => {
+const changeBoardNum = (idx, setToNum, board = []) => {
   if (idx < 0 || idx > 80) throw new Error(`board idx ${idx} is invalid`)
   if (setToNum < 1 || setToNum > 9)
     throw new Error(`board newNum ${setToNum} is invalid`)
@@ -125,20 +124,102 @@ const changeBoardNum = (idx = 0, setToNum = 1, board = []) => {
 
   if (oldNum === setToNum) return board
 
-  return swap(board.slice(0), oldNum, setToNum)
+  return swap(board, oldNum, setToNum)
 }
 
-// TODO: implement these for more swapping options
-// eslint-disable-next-line no-unused-vars
-const changeBoardCols = (col1, col2, board) => board
-// eslint-disable-next-line no-unused-vars
-const changeBoardGroupCols = (col1, col2, board) => board
-// eslint-disable-next-line no-unused-vars
-const changeBoardRows = (row1, row2, board) => board
-// eslint-disable-next-line no-unused-vars
-const changeBoardGroupRows = (row1, row2, board) => board
+const changeBoardCols = (col1Idx, col2Idx, board = []) => {
+  if (col1Idx < 0 || col1Idx > 8 || col2Idx < 0 || col2Idx > 8)
+    throw new Error('invalid column index')
+
+  if (Math.ceil((col1Idx + 1) / 3) !== Math.ceil((col2Idx + 1) / 3))
+    throw new Error('columns must be in same group')
+
+  if (col1Idx === col2Idx) return board
+
+  const cols = chunkifyAsColumns(board)
+
+  let col1 = cols[col1Idx].slice(0)
+  col1.forEach((n, i) => {
+    col1 = swap(col1, n, col2[i])
+  })
+  cols[col1Idx] = col1
+
+  let col2 = cols[col2Idx].slice(0)
+  col2.forEach((n, i) => {
+    col2 = swap(col2, n, col1[i])
+  })
+  cols[col2Idx] = col2
+
+  return flatten(chunkifyAsColumns(flatten(cols)))
+}
+
+const changeBoardRows = (row1Idx, row2Idx, board = []) => {
+  if (row1Idx < 0 || row1Idx > 8 || row2Idx < 0 || row2Idx > 8)
+    throw new Error('invalid row index')
+
+  if (Math.ceil((row1Idx + 1) / 3) !== Math.ceil((row2Idx + 1) / 3))
+    throw new Error('rows must be in same group')
+
+  if (row1Idx === row2Idx) return board
+
+  const rows = chunkifyAsRows(board)
+
+  let row1 = rows[row1Idx].slice(0)
+  row1.forEach((n, i) => {
+    row1 = swap(row1, n, row2[i])
+  })
+  rows[row1Idx] = row1
+
+  let row2 = rows[row2Idx].slice(0)
+  row2.forEach((n, i) => {
+    row2 = swap(row2, n, row1[i])
+  })
+  rows[row2Idx] = row2
+
+  return flatten(rows)
+}
+
+const changeBoardGroupCols = (col1Idx, col2Idx, board = []) => {
+  if (col1Idx < 0 || col1Idx > 2 || col2Idx < 0 || col2Idx > 2)
+    throw new Error('invalid column group index')
+
+  if (col1Idx === col2Idx) return board
+
+  col1Idx *= 3
+  col2Idx *= 3
+  for (let i = 0; i < 2; i++) {
+    board = changeBoardCols(col1Idx + i, col2Idx + i, board)
+  }
+
+  return board
+}
+
+const changeBoardGroupRows = (row1Idx, row2Idx, board = []) => {
+  if (row1Idx < 0 || row1Idx > 2 || row2Idx < 0 || row2Idx > 2)
+    throw new Error('invalid row group index')
+
+  if (row1Idx === row2Idx) return board
+
+  row1Idx *= 3
+  row2Idx *= 3
+  for (let i = 0; i < 2; i++) {
+    board = changeBoardRows(row1Idx + i, row2Idx + i, board)
+  }
+
+  return board
+}
 
 module.exports.changeBoardNum = changeBoardNum
+module.exports.changeBoardCols = changeBoardCols // TODO: test
+module.exports.changeBoardRows = changeBoardRows // TODO: test
+module.exports.changeBoardGroupCols = changeBoardGroupCols // TODO: test
+module.exports.changeBoardGroupRows = changeBoardGroupRows // TODO: test
+
+module.exports.chunkifyAsColumns = chunkifyAsColumns
 module.exports.chunkifyAsRows = chunkifyAsRows
-module.exports.execTimes = execTimes
+module.exports.chunkifyAsGroupColumns = chunkifyAsGroupColumns // TODO: test
+module.exports.chunkifyAsGroupRows = chunkifyAsGroupRows // TODO: test
+module.exports.chunkifyAsSquares = chunkifyAsSquares // TODO: test
+
+module.exports.execTimes = execTimes // TODO: test
 module.exports.swap = swap

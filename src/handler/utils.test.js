@@ -1,4 +1,9 @@
-const {chunkifyAsRows, changeBoardNum, swap} = require('./utils')
+const {
+  chunkifyAsColumns,
+  chunkifyAsRows,
+  changeBoardNum,
+  swap
+} = require('./utils')
 const board = require('./board')
 
 describe('UTILS::', () => {
@@ -9,7 +14,26 @@ describe('UTILS::', () => {
     expect(result).toEqual(expected)
   })
 
-  it('should chunkify array', () => {
+  it('should chunkify array as columns', () => {
+    // prettier-ignore
+    const data = [0,0,0,2,0,0,0,0,0,0,0,3,0,0,0,0,7,0,0,0,0,1,0,9,0,0,0,0,1,0,0,7,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,7,0,0,0,0,0,0,0,3,1,0,0,0,0,9,6,0,0,0,0,9,3,7,4,1,0,4,5,7,1,0,3,8,0]
+
+    const expected = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 0, 3, 0, 4],
+      [0, 3, 0, 0, 0, 7, 1, 0, 5],
+      [2, 0, 1, 0, 0, 0, 0, 0, 7],
+      [0, 0, 0, 7, 0, 0, 0, 9, 1],
+      [0, 0, 9, 0, 0, 0, 0, 3, 0],
+      [0, 0, 0, 0, 4, 0, 0, 7, 3],
+      [0, 7, 0, 0, 0, 0, 9, 4, 8],
+      [0, 0, 0, 0, 0, 0, 6, 1, 0]
+    ]
+
+    expect(chunkifyAsColumns(data)).toEqual(expected)
+  })
+
+  it('should chunkify array as rows', () => {
     // prettier-ignore
     const data = [0,0,0,2,0,0,0,0,0,0,0,3,0,0,0,0,7,0,0,0,0,1,0,9,0,0,0,0,1,0,0,7,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,7,0,0,0,0,0,0,0,3,1,0,0,0,0,9,6,0,0,0,0,9,3,7,4,1,0,4,5,7,1,0,3,8,0]
 
@@ -28,7 +52,7 @@ describe('UTILS::', () => {
     expect(chunkifyAsRows(data)).toEqual(expected)
   })
 
-  it('should changeBoard if needed', () => {
+  it('should changeBoardNum if needed', () => {
     let data = board()
     let expectedData
     let result
