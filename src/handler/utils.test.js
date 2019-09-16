@@ -1,7 +1,10 @@
+const flatten = require('lodash.flatten')
 const {
   chunkifyAsColumns,
   chunkifyAsRows,
   changeBoardNum,
+  changeBoardCols,
+  changeBoardRows,
   swap
 } = require('./utils')
 const board = require('./board')
@@ -68,6 +71,46 @@ describe('UTILS::', () => {
     // prettier-ignore
     expectedData = [2,1,3,4,5,6,7,8,9,4,5,6,7,8,9,2,1,3,7,8,9,2,1,3,4,5,6,1,3,4,5,6,7,8,9,2,5,6,7,8,9,2,1,3,4,8,9,2,1,3,4,5,6,7,3,4,5,6,7,8,9,2,1,6,7,8,9,2,1,3,4,5,9,2,1,3,4,5,6,7,8]
     result = changeBoardNum(0, 2, data)
+    expect(result).not.toEqual(data)
+    expect(result).toEqual(expectedData)
+  })
+
+  it('should changeBoardCols', () => {
+    const data = board()
+
+    const expectedData = flatten([
+      [2, 1, 3, 4, 5, 6, 7, 8, 9],
+      [5, 4, 6, 7, 8, 9, 1, 2, 3],
+      [8, 7, 9, 1, 2, 3, 4, 5, 6],
+      [3, 2, 4, 5, 6, 7, 8, 9, 1],
+      [6, 5, 7, 8, 9, 1, 2, 3, 4],
+      [9, 8, 1, 2, 3, 4, 5, 6, 7],
+      [4, 3, 5, 6, 7, 8, 9, 1, 2],
+      [7, 6, 8, 9, 1, 2, 3, 4, 5],
+      [1, 9, 2, 3, 4, 5, 6, 7, 8]
+    ])
+    const result = changeBoardCols(0, 1, data)
+
+    expect(result).not.toEqual(data)
+    expect(result).toEqual(expectedData)
+  })
+
+  it('should changeBoardRows', () => {
+    const data = board()
+
+    const expectedData = flatten([
+      [4, 5, 6, 7, 8, 9, 1, 2, 3],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      [7, 8, 9, 1, 2, 3, 4, 5, 6],
+      [2, 3, 4, 5, 6, 7, 8, 9, 1],
+      [5, 6, 7, 8, 9, 1, 2, 3, 4],
+      [8, 9, 1, 2, 3, 4, 5, 6, 7],
+      [3, 4, 5, 6, 7, 8, 9, 1, 2],
+      [6, 7, 8, 9, 1, 2, 3, 4, 5],
+      [9, 1, 2, 3, 4, 5, 6, 7, 8]
+    ])
+    const result = changeBoardRows(0, 1, data)
+
     expect(result).not.toEqual(data)
     expect(result).toEqual(expectedData)
   })

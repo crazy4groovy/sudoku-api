@@ -138,17 +138,10 @@ const changeBoardCols = (col1Idx, col2Idx, board = []) => {
 
   const cols = chunkifyAsColumns(board)
 
-  let col1 = cols[col1Idx].slice(0)
-  col1.forEach((n, i) => {
-    col1 = swap(col1, n, col2[i])
-  })
-  cols[col1Idx] = col1
-
-  let col2 = cols[col2Idx].slice(0)
-  col2.forEach((n, i) => {
-    col2 = swap(col2, n, col1[i])
-  })
-  cols[col2Idx] = col2
+  const col1 = cols[col1Idx]
+  const col2 = cols[col2Idx]
+  cols[col1Idx] = col2
+  cols[col2Idx] = col1
 
   return flatten(chunkifyAsColumns(flatten(cols)))
 }
@@ -164,17 +157,10 @@ const changeBoardRows = (row1Idx, row2Idx, board = []) => {
 
   const rows = chunkifyAsRows(board)
 
-  let row1 = rows[row1Idx].slice(0)
-  row1.forEach((n, i) => {
-    row1 = swap(row1, n, row2[i])
-  })
-  rows[row1Idx] = row1
-
-  let row2 = rows[row2Idx].slice(0)
-  row2.forEach((n, i) => {
-    row2 = swap(row2, n, row1[i])
-  })
-  rows[row2Idx] = row2
+  const row1 = rows[row1Idx]
+  const row2 = rows[row2Idx]
+  rows[row1Idx] = row2
+  rows[row2Idx] = row1
 
   return flatten(rows)
 }
@@ -210,8 +196,8 @@ const changeBoardGroupRows = (row1Idx, row2Idx, board = []) => {
 }
 
 module.exports.changeBoardNum = changeBoardNum
-module.exports.changeBoardCols = changeBoardCols // TODO: test
-module.exports.changeBoardRows = changeBoardRows // TODO: test
+module.exports.changeBoardCols = changeBoardCols
+module.exports.changeBoardRows = changeBoardRows
 module.exports.changeBoardGroupCols = changeBoardGroupCols // TODO: test
 module.exports.changeBoardGroupRows = changeBoardGroupRows // TODO: test
 
