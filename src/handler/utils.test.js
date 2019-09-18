@@ -1,16 +1,29 @@
 const flatten = require('lodash.flatten')
+
+const board = require('./board')
 const {
   chunkifyAsColumns,
   chunkifyAsRows,
   changeBoardNum,
   changeBoardCols,
   changeBoardRows,
-  swap
+  changeBoardGroupCols,
+  changeBoardGroupRows,
+  swap,
+  execTimes
 } = require('./utils')
-const board = require('./board')
 
 describe('UTILS::', () => {
-  it('should swap nums', () => {
+  it('should execTimes', () => {
+    let ctr = 0
+    function cb() {
+      ctr++
+    }
+    execTimes(3, cb)
+    expect(ctr).toBe(3)
+  })
+
+  it('should swap nums 1<->2', () => {
     const data = [1, 2, 3, 2, 1]
     const expected = [2, 1, 3, 1, 2]
     const result = swap(data, 1, 2)
@@ -55,7 +68,7 @@ describe('UTILS::', () => {
     expect(chunkifyAsRows(data)).toEqual(expected)
   })
 
-  it('should changeBoardNum if needed', () => {
+  it('should changeBoardNum if needed idx=0 num=2', () => {
     let data = board()
     let expectedData
     let result
@@ -75,7 +88,7 @@ describe('UTILS::', () => {
     expect(result).toEqual(expectedData)
   })
 
-  it('should changeBoardCols', () => {
+  it('should changeBoardCols 0<->1', () => {
     const data = board()
 
     const expectedData = flatten([
@@ -95,7 +108,7 @@ describe('UTILS::', () => {
     expect(result).toEqual(expectedData)
   })
 
-  it('should changeBoardRows', () => {
+  it('should changeBoardRows 0<->1', () => {
     const data = board()
 
     const expectedData = flatten([
@@ -110,6 +123,46 @@ describe('UTILS::', () => {
       [9, 1, 2, 3, 4, 5, 6, 7, 8]
     ])
     const result = changeBoardRows(0, 1, data)
+
+    expect(result).not.toEqual(data)
+    expect(result).toEqual(expectedData)
+  })
+
+  it('should changeBoardGroupCols 0<->1', () => {
+    const data = board()
+    const expectedData = flatten([
+      [4, 5, 6, 1, 2, 3, 7, 8, 9],
+      [7, 8, 9, 4, 5, 6, 1, 2, 3],
+      [1, 2, 3, 7, 8, 9, 4, 5, 6],
+      [5, 6, 7, 2, 3, 4, 8, 9, 1],
+      [8, 9, 1, 5, 6, 7, 2, 3, 4],
+      [2, 3, 4, 8, 9, 1, 5, 6, 7],
+      [6, 7, 8, 3, 4, 5, 9, 1, 2],
+      [9, 1, 2, 6, 7, 8, 3, 4, 5],
+      [3, 4, 5, 9, 1, 2, 6, 7, 8]
+    ])
+
+    const result = changeBoardGroupCols(0, 1, data)
+
+    expect(result).not.toEqual(data)
+    expect(result).toEqual(expectedData)
+  })
+
+  it('should changeBoardGroupRows 0<->1', () => {
+    const data = board()
+    const expectedData = flatten([
+      [2, 3, 4, 5, 6, 7, 8, 9, 1],
+      [5, 6, 7, 8, 9, 1, 2, 3, 4],
+      [8, 9, 1, 2, 3, 4, 5, 6, 7],
+      [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      [4, 5, 6, 7, 8, 9, 1, 2, 3],
+      [7, 8, 9, 1, 2, 3, 4, 5, 6],
+      [3, 4, 5, 6, 7, 8, 9, 1, 2],
+      [6, 7, 8, 9, 1, 2, 3, 4, 5],
+      [9, 1, 2, 3, 4, 5, 6, 7, 8]
+    ])
+
+    const result = changeBoardGroupRows(0, 1, data)
 
     expect(result).not.toEqual(data)
     expect(result).toEqual(expectedData)

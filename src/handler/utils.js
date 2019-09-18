@@ -139,8 +139,7 @@ const changeBoardCols = (col1Idx, col2Idx, board = []) => {
   const cols = chunkifyAsColumns(board)
 
   const col1 = cols[col1Idx]
-  const col2 = cols[col2Idx]
-  cols[col1Idx] = col2
+  cols[col1Idx] = cols[col2Idx]
   cols[col2Idx] = col1
 
   return flatten(chunkifyAsColumns(flatten(cols)))
@@ -158,8 +157,7 @@ const changeBoardRows = (row1Idx, row2Idx, board = []) => {
   const rows = chunkifyAsRows(board)
 
   const row1 = rows[row1Idx]
-  const row2 = rows[row2Idx]
-  rows[row1Idx] = row2
+  rows[row1Idx] = rows[row2Idx]
   rows[row2Idx] = row1
 
   return flatten(rows)
@@ -171,13 +169,13 @@ const changeBoardGroupCols = (col1Idx, col2Idx, board = []) => {
 
   if (col1Idx === col2Idx) return board
 
-  col1Idx *= 3
-  col2Idx *= 3
-  for (let i = 0; i < 2; i++) {
-    board = changeBoardCols(col1Idx + i, col2Idx + i, board)
-  }
+  const groups = chunkifyAsGroupColumns(board)
 
-  return board
+  const g1 = groups[col1Idx]
+  groups[col1Idx] = groups[col2Idx]
+  groups[col2Idx] = g1
+
+  return flatten(chunkifyAsColumns(flatten(flatten(groups))))
 }
 
 const changeBoardGroupRows = (row1Idx, row2Idx, board = []) => {
@@ -186,26 +184,26 @@ const changeBoardGroupRows = (row1Idx, row2Idx, board = []) => {
 
   if (row1Idx === row2Idx) return board
 
-  row1Idx *= 3
-  row2Idx *= 3
-  for (let i = 0; i < 2; i++) {
-    board = changeBoardRows(row1Idx + i, row2Idx + i, board)
-  }
+  const groups = chunkifyAsGroupRows(board)
 
-  return board
+  const g1 = groups[row1Idx]
+  groups[row1Idx] = groups[row2Idx]
+  groups[row2Idx] = g1
+
+  return flatten(flatten(groups))
 }
 
 module.exports.changeBoardNum = changeBoardNum
 module.exports.changeBoardCols = changeBoardCols
 module.exports.changeBoardRows = changeBoardRows
-module.exports.changeBoardGroupCols = changeBoardGroupCols // TODO: test
-module.exports.changeBoardGroupRows = changeBoardGroupRows // TODO: test
+module.exports.changeBoardGroupCols = changeBoardGroupCols
+module.exports.changeBoardGroupRows = changeBoardGroupRows
 
 module.exports.chunkifyAsColumns = chunkifyAsColumns
 module.exports.chunkifyAsRows = chunkifyAsRows
-module.exports.chunkifyAsGroupColumns = chunkifyAsGroupColumns // TODO: test
-module.exports.chunkifyAsGroupRows = chunkifyAsGroupRows // TODO: test
-module.exports.chunkifyAsSquares = chunkifyAsSquares // TODO: test
+module.exports.chunkifyAsGroupColumns = chunkifyAsGroupColumns
+module.exports.chunkifyAsGroupRows = chunkifyAsGroupRows
+module.exports.chunkifyAsSquares = chunkifyAsSquares // TODO: needs a test
 
-module.exports.execTimes = execTimes // TODO: test
+module.exports.execTimes = execTimes
 module.exports.swap = swap
