@@ -16,7 +16,7 @@
     "cors": "^2.8.4",
     "dotenv": "^6.1.0",
     "dotenv-expand": "^4.2.0",
-    "fastify": "^1.12.1",
+    "fastify": "^2.15.1",
     "jest": "^23.6.0",
     "lodash.flatten": "^4.4.0",
     "lodash.random": "^3.2.0",
